@@ -1,8 +1,7 @@
-numpy
-pandas
-matplotlib
-seaborn
-sklearn
-nltk
-pickle
-fastapi
+streamlit>=1.35
+pandas>=2.0
+numpy>=1.26
+scikit-learn>=1.4
+scipy>=1.11
+requests>=2.31
+ 
