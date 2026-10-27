@@ -3,14 +3,13 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os, pickle
-from typing import Literal, Optional, List, Dict, Any, Tuple,Annotated
+from typing import Literal, Optional, List, Dict, Any, Tuple, Annotated
 import httpx
 import numpy as np
 import pandas as pd
 
-
 load_dotenv()
-TMDB_API_KEY = os.getenv('TMDB_API_KEY')
+TMDB_API_KEY = os.getenv("TMDB_API_KEY")
 
 
 TMDB_BASE = "https://api.themoviedb.org/3"
@@ -19,9 +18,9 @@ TMDB_IMG_500 = "https://image.tmdb.org/t/p/w500"
 if not TMDB_API_KEY:
     raise RuntimeError("API KEY is giving errors")
 
-#FASTAPI APPLICATION
+# FASTAPI APPLICATION
 
-app = FastAPI(title= "Movie Recommendation System")
+app = FastAPI(title="Movie Recommendation System")
 
 app.add_middleware(
     CORSMiddleware,
@@ -34,50 +33,98 @@ app.add_middleware(
 
 # Getting Pickle files
 
-BASE_DR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),"models")
+BASE_DR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models"
+)
 DF_PATH = os.path.join(BASE_DR, "df.pkl")
 INDICES_PATH = os.path.join(BASE_DR, "indices.pkl")
 TFIDF_PATH = os.path.join(BASE_DR, "tfidf.pkl")
 TFIDF_MATRIX_PATH = os.path.join(BASE_DR, "tfidf_matrix.pkl")
 
 
-#Creating Pydantic Models
+df: Optional[pd.DataFrame] = None
+tfidf_matrix_obj: Any = None
+indices_obj: Any = None
+tfidf_obj: Any = None
+
+# Creating Pydantic Models
+
 
 class TMDB_Movie_card(BaseModel):
-    tmdb_id : int
-    title : str
-    poster_url : Optional[str] = None
-    release_date : Optional[str] = None
-    vote_average : Optional[float] = None
+    tmdb_id: int
+    title: str
+    poster_url: Optional[str] = None
+    release_date: Optional[str] = None
+    vote_average: Optional[float] = None
+
 
 class TMDB_Movie_Details(BaseModel):
-    tmdb_id : int
-    title : str
-    overview : Optional[str] = None
-    release_date : Optional[str] = None
-    poster_url : Optional[str] = None
-    backdrop_url : Optional[str] = None
-    genre : List[Dict] = []
+    tmdb_id: int
+    title: str
+    overview: Optional[str] = None
+    release_date: Optional[str] = None
+    poster_url: Optional[str] = None
+    backdrop_url: Optional[str] = None
+    genre: List[Dict] = []
+
 
 class TMDB_reccom_item(BaseModel):
-    title : str
-    score : float
-    tmdb : Optional[TMDB_Movie_card] = None
+    title: str
+    score: float
+    tmdb: Optional[TMDB_Movie_card] = None
+
 
 class Search_Bundle_Response(BaseModel):
-    query : str
-    movie_details : TMDB_Movie_Details
+    query: str
+    movie_details: TMDB_Movie_Details
     tfidf_reccomendation: List[TMDB_reccom_item]
     genre_reccomendation: List[TMDB_Movie_card]
 
 
-#UTILITY Functions
-def norm_title(title : str) -> str:
+# UTILITY Functions
+def norm_title(title: str) -> str:
     return str(title).split().lower()
 
-def make_img_url(path : Optional[str]) -> str:
+
+def make_img_url(path: Optional[str]) -> str:
     if not path:
         return None
     return f"{TMDB_IMG_500}{path}"
 
-    
+
+async def tmdb_get(path: str, params: Dict[str, Any]) -> Dict[str, Any]:
+
+    q = Dict(params)
+    q["api_key"] = TMDB_API_KEY
+
+    try:
+        async with httpx.AsyncClient(timeout=20) as client:
+            r = await client.get(f"{TMDB_BASE}{path}", params=q)
+    except httpx.RequestError as e:
+        raise HTTPException(
+            status_code=502, detail=" There is some problem while connecting"
+        )
+    if r.status_code != 200:
+        raise HTTPException(
+            status_code=502, detail=f"TMDB Error: {r.status_code} : {r.text} "
+        )
+
+    return r.json
+
+
+async def tmdb_moviecard_from_results(
+    results: List[Dict], limit: int = 20
+) -> List[TMDB_Movie_card]:
+    out: List[TMDB_Movie_card] = []
+
+    for m in results or []:
+        out.append(
+            tmdb_id=int(m["id"]),
+            title=m.get("title") or m.get("name") or "",
+            poster_url=make_img_url(m.get("poster_path")),
+            release_date=m.get("release_date"),
+            vote_average=m.get("vote_average"),
+        )
+    return out
+
+
