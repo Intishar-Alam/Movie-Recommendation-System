@@ -112,7 +112,7 @@ async def tmdb_get(path: str, params: Dict[str, Any]) -> Dict[str, Any]:
             status_code=502, detail=f"TMDB Error: {r.status_code} : {r.text} "
         )
 
-    return r.json
+    return r.json()
 
 
 async def tmdb_moviecard_from_results(
@@ -122,13 +122,15 @@ async def tmdb_moviecard_from_results(
 
     for m in results or []:
         out.append(
-            tmdb_id=int(m["id"]),
-            title=m.get("title") or m.get("name") or "",
-            poster_url=make_img_url(m.get("poster_path")),
-            release_date=m.get("release_date"),
-            vote_average=m.get("vote_average"),
+            TMDB_Movie_card(
+                tmdb_id=int(m["id"]),
+                title=m.get("title") or m.get("name") or "",
+                poster_url=make_img_url(m.get("poster_path")),
+                release_date=m.get("release_date"),
+                vote_average=m.get("vote_average"),
+            )
         )
-    return out
+    return out[:limit]
 
 
 async def tmdb_movie_details(movie_id: int) -> TMDB_Movie_Details:
@@ -451,4 +453,3 @@ async def search_bundle(
         tfidf_recommendations=tfidf_items,
         genre_recommendations=genre_recs,
     )
-
