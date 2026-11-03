@@ -97,7 +97,7 @@ def make_img_url(path: Optional[str]) -> str:
 
 async def tmdb_get(path: str, params: Dict[str, Any]) -> Dict[str, Any]:
 
-    q = Dict(params)
+    q = dict(params)
     q["api_key"] = TMDB_API_KEY
 
     try:

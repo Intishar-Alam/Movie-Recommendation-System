@@ -3,7 +3,7 @@ import html
 import httpx
 import streamlit as st
 
-API_BASE = "http://127.0.0.1:8000"
+API_BASE = "https://movie-recommendation-system-7hn4.onrender.com/" or "http://127.0.0.1:8000"
 IMG_500 = "https://image.tmdb.org/t/p/w500"
 NO_POSTER = "https://placehold.co/500x750/1D2029/8E93A0?text=No+poster"
 
