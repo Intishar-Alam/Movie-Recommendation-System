@@ -14,11 +14,10 @@ experience.
   ---------------------------------------------------------------------------------------------------------------
   Component                           Link
   ----------------------------------- ---------------------------------------------------------------------------
-  🎬 Live Application                 [Streamlit App](YOUR_STREAMLIT_APP_URL)
+  🎬 Live Application                  https://intishar-project-movie-recommendation-system.streamlit.app
 
-  ⚙️ Backend API                      [Render API] https://movie-recommendation-system-7hn4.onrender.com
+  ⚙️ Backend API                       https://movie-recommendation-system-7hn4.onrender.com
 
-  💻 Source Code                      [Github] https://github.com/Intishar-Alam/Movie-Recommendation-System
   ---------------------------------------------------------------------------------------------------------------
 
 > Replace the two deployment URL placeholders with your actual links.
@@ -267,13 +266,4 @@ Interested in Machine Learning, Deep Learning, NLP, and Generative AI.
 -   Project Repository: [Movie Recommendation
     System](https://github.com/Intishar-Alam/Movie-Recommendation-System)
 
-------------------------------------------------------------------------
 
-```{=html}
-<p align="center">
-```
-`<strong>`{=html}Built with curiosity, learning, and a passion for AI.
-🚀`</strong>`{=html}
-```{=html}
-</p>
-```
