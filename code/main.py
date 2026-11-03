@@ -43,8 +43,9 @@ app.add_middleware(
 # =========================
 # PICKLE GLOBALS
 # =========================
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
+BASE_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "models"
+)
 DF_PATH = os.path.join(BASE_DIR, "df.pkl")
 INDICES_PATH = os.path.join(BASE_DIR, "indices.pkl")
 TFIDF_MATRIX_PATH = os.path.join(BASE_DIR, "tfidf_matrix.pkl")
