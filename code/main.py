@@ -322,7 +322,7 @@ def health():
 @app.get("/home", response_model=List[TMDBMovieCard])
 async def home(
     category: str = Query("popular"),
-    limit: int = Query(24, ge=1, le=50),
+    limit: int = Query(40, ge=1, le=70),
 ):
     """
     Home feed for Streamlit (posters).
