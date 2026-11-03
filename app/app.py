@@ -232,12 +232,10 @@ def section(title: str):
 # Pages
 # ----------------------------------------------------------------------------
 def home_page():
-    choice = st.radio(
+    choice = st.pills(
         "Browse",
-        options=list(CATEGORIES),
-        index=list(CATEGORIES).index("Popular"),
-        horizontal=True,
-        label_visibility="collapsed"
+        list(CATEGORIES),
+        default="Popular"
     )
     choice = choice or "Popular"
     data = get("/home", category=CATEGORIES[choice], limit=24)
